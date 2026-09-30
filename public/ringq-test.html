@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>RingQ Link Test</title>
+<!--
+  Finds which link, if any, opens the RingQ app with a number filled in.
+  RingQ publishes no deep-link format, so every known shape is listed here to
+  be tapped on a real phone. Whichever one works goes into ringqHref() in
+  src/lib/dialer.js.
+-->
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --text:#111; --muted:#666; --line:#dde1e6; --accent:#0a7d5a; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111418; --card:#1b2026; --text:#eef1f4; --muted:#9aa4ae; --line:#2c333b; --accent:#3ccf9a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:16px; background:var(--bg); color:var(--text);
+    font:15px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  p { color:var(--muted); margin:0 0 12px; }
+  input { width:100%; font-size:16px; padding:12px; border:1px solid var(--line);
+    border-radius:10px; background:var(--card); color:var(--text); margin-bottom:8px; }
+  h2 { font-size:14px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:20px 0 8px; }
+  .row { display:flex; align-items:center; gap:10px; background:var(--card);
+    border:1px solid var(--line); border-radius:10px; padding:12px; margin-bottom:8px;
+    color:inherit; text-decoration:none; width:100%; font:inherit; text-align:left; }
+  .id { flex:none; font-weight:700; color:var(--accent); min-width:32px; }
+  .what { flex:1; min-width:0; }
+  .url { display:block; font:12px ui-monospace, Menlo, monospace; color:var(--muted); word-break:break-all; }
+  .env { font:12px ui-monospace, Menlo, monospace; color:var(--muted); word-break:break-all; }
+</style>
+</head>
+<body>
+<h1>RingQ link test</h1>
+<p>Enter a number, then tap each row in turn. Note the code (A1, I2, …) of every row that opens <b>RingQ with the number already in the dialer</b>.</p>
+<input id="num" type="tel" inputmode="tel" placeholder="Number to test, e.g. 91234567" autocomplete="off">
+<p class="env" id="env"></p>
+
+<h2>Android</h2>
+<div id="android"></div>
+
+<h2>iPhone</h2>
+<div id="ios"></div>
+
+<script>
+  var PKG = 'com.ringq.app'
+  function intent(data, scheme, action, extra) {
+    return 'intent:' + data + '#Intent;' + (scheme ? 'scheme=' + scheme + ';' : '') +
+      'action=' + action + ';' + (extra || '') + 'package=' + PKG + ';end'
+  }
+  var ANDROID = [
+    ['A1', 'tel, DIAL, RingQ only',      function (n) { return intent(n, 'tel', 'android.intent.action.DIAL') }],
+    ['A2', 'tel, VIEW, RingQ only',      function (n) { return intent(n, 'tel', 'android.intent.action.VIEW') }],
+    ['A3', 'tel, CALL, RingQ only',      function (n) { return intent(n, 'tel', 'android.intent.action.CALL') }],
+    ['A4', 'sip, VIEW, RingQ only',      function (n) { return intent(n, 'sip', 'android.intent.action.VIEW') }],
+    ['A5', 'sip, CALL, RingQ only',      function (n) { return intent(n, 'sip', 'android.intent.action.CALL') }],
+    ['A6', 'share text to RingQ',        function (n) { return 'intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=' + encodeURIComponent(n) + ';package=' + PKG + ';end' }],
+    ['A7', 'sip: link (any app)',        function (n) { return 'sip:' + n }],
+    ['A8', 'ringq:// scheme',            function (n) { return 'ringq://call?number=' + n }],
+    ['A9', 'linkus:// scheme',           function (n) { return 'linkus://call?number=' + n }],
+    ['A10', 'tel: (baseline, SIM)',      function (n) { return 'tel:' + n }]
+  ]
+  var IOS = [
+    ['I1', 'sip: link',                  function (n) { return 'sip:' + n }],
+    ['I2', 'ringq://call?number=',       function (n) { return 'ringq://call?number=' + n }],
+    ['I3', 'ringq://dial?number=',       function (n) { return 'ringq://dial?number=' + n }],
+    ['I4', 'ringq://<number>',           function (n) { return 'ringq://' + n }],
+    ['I5', 'RingQ:// (capitalised)',     function (n) { return 'RingQ://call?number=' + n }],
+    ['I6', 'linkus://call?number=',      function (n) { return 'linkus://call?number=' + n }],
+    ['I7', 'callto:',                    function (n) { return 'callto:' + n }],
+    ['I8', 'Share sheet (pick RingQ)',   null],
+    ['I9', 'tel: (baseline, SIM)',       function (n) { return 'tel:' + n }]
+  ]
+
+  var num = document.getElementById('num')
+  function digits() { return num.value.replace(/[^\d+]/g, '') }
+
+  function render(list, into) {
+    var box = document.getElementById(into)
+    list.forEach(function (t) {
+      var el = t[2] ? document.createElement('a') : document.createElement('button')
+      el.className = 'row'
+      if (!t[2]) el.type = 'button'
+      el.innerHTML = '<span class="id">' + t[0] + '</span><span class="what">' + t[1] +
+        '<span class="url"></span></span>'
+      var url = el.querySelector('.url')
+      function refresh() {
+        var n = digits() || '91234567'
+        if (t[2]) { el.href = t[2](n); url.textContent = el.href }
+        else url.textContent = 'navigator.share({ text: "' + n + '" })'
+      }
+      refresh()
+      num.addEventListener('input', refresh)
+      if (!t[2]) {
+        el.addEventListener('click', function () {
+          if (!navigator.share) return alert('Share is not supported in this browser.')
+          navigator.share({ text: digits() || '91234567' }).catch(function () {})
+        })
+      }
+      box.appendChild(el)
+    })
+  }
+  render(ANDROID, 'android')
+  render(IOS, 'ios')
+  document.getElementById('env').textContent = navigator.userAgent
+</script>
+</body>
+</html>

@@ -243,10 +243,11 @@ export default function CallControl({ conversation }) {
  *
  * RingQ cannot be handed a number from a web page: on iOS it has no public
  * URL scheme and is not offered as a default calling app, and on Android it
- * opens from our intent but ignores the number. So the RingQ path is manual —
- * copy the number here, then paste it into RingQ's keypad. Copy and open are
- * separate taps on purpose: switching apps in the same tap as the copy
- * cancels the copy.
+ * opens from our intent but ignores the number. So the RingQ path copies the
+ * number for pasting into RingQ's keypad. On Android one tap copies and then
+ * opens RingQ; on iOS, where RingQ cannot be opened, the sheet copies and the
+ * user switches apps themselves. public/ringq-test.html probes for a link that
+ * fills the number in directly.
  */
 function DialChooser({ digits, onClose }) {
   const [step, setStep] = useState('choose')
@@ -261,6 +262,19 @@ function DialChooser({ digits, onClose }) {
 
   const copy = async () => setCopied(await copyText(digits))
   const ringq = ringqHref(digits)
+
+  // One tap where RingQ can be opened: copy first, and only switch apps once
+  // the clipboard write has resolved, so the switch cannot cancel it. A failed
+  // copy stays on the sheet so the number can be copied by hand.
+  const copyAndOpen = async () => {
+    const ok = await copyText(digits)
+    setCopied(ok)
+    setStep('ringq')
+    if (ok) {
+      window.location.href = ringq
+      onClose()
+    }
+  }
 
   return (
     <div className="dial-sheet-backdrop" onClick={onClose}>
@@ -277,7 +291,7 @@ function DialChooser({ digits, onClose }) {
             <button
               type="button"
               className="dial-sheet-btn is-primary"
-              onClick={() => setStep('ringq')}
+              onClick={ringq ? copyAndOpen : () => setStep('ringq')}
             >
               RingQ
             </button>
