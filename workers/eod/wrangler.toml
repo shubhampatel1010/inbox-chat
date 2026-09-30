@@ -1,0 +1,17 @@
+# Standalone EOD digest Worker — its OWN deploy, separate from the Pages app
+# (Cloudflare Pages rejects cron triggers, so this cannot live there).
+name = "wp-chat-eod"
+main = "src/index.js"
+compatibility_date = "2024-11-06"
+
+# Cloudflare cron is ALWAYS UTC. 11:00 UTC = 19:00 (7pm) Asia/Singapore (UTC+8),
+# i.e. end of the working day — the team's timezone. Change this ONE line to
+# reschedule (e.g. "0 0 * * *" = 08:00 SGT for a morning send).
+[triggers]
+crons = ["0 11 * * *"]
+
+# Non-secret config. Default pending threshold; valid range 3–10, clamped in code.
+# Secrets (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY, EOD_FROM,
+# EOD_TO) are NOT here — set them with `wrangler secret put` (see the deploy notes).
+[vars]
+EOD_PENDING_DAYS = "7"

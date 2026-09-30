@@ -1,0 +1,39 @@
+name = "whatsapp-team-inbox"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-11-06"
+
+# @supabase/supabase-js reaches Supabase over HTTPS/fetch, so no Node polyfills
+# are needed. (nodejs_compat was only required by the old raw-socket Postgres
+# driver, which hangs on the Workers runtime.)
+
+# Secrets are NOT stored here. Set them in the Cloudflare Pages dashboard
+# (Settings -> Environment variables -> Encrypted), or in a local .dev.vars file:
+#   SUPABASE_URL
+#   SUPABASE_SERVICE_ROLE_KEY
+#   JWT_SECRET
+#   WHAPI_TOKEN
+#   WHAPI_API_URL
+#   WHAPI_WEBHOOK_SECRET
+#   BUSINESS_NUMBER
+#   LEADS_TENANT_ID   (leads bell: the OS tenant uuid whose leads are shown)
+
+# NOTE: no [triggers] block here — Cloudflare Pages rejects it outright
+# ("Configuration file for Pages projects does not support triggers"). Cron is
+# a Workers-only feature.
+#
+# functions/_lib/channel-monitor.js therefore has NO caller today. Its
+# transition detection is complete and tested; it just needs a scheduler. To
+# reconnect it, deploy a separate Worker with its own wrangler.toml:
+#
+#   [triggers]
+#   crons = ["*/5 * * * *"]
+#
+#   export default {
+#     async scheduled(event, env, ctx) {
+#       ctx.waitUntil(monitorChannel(env))
+#     },
+#   }
+#
+# That Worker needs the same env vars this project uses: SUPABASE_URL,
+# SUPABASE_SERVICE_ROLE_KEY, WHAPI_TOKEN, WHAPI_API_URL, VAPID_PUBLIC_KEY,
+# VAPID_PRIVATE_KEY, VAPID_SUBJECT.

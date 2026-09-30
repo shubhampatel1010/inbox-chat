@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(node -v)",
+      "PowerShell(npm -v)",
+      "PowerShell(npm install --no-audit --no-fund)",
+      "PowerShell(npm run build)",
+      "PowerShell(node \"C:\\\\Users\\\\GROWWS~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Growwstacks-Desktop-Thomas-Chat-interface\\\\c3f958ea-8255-4ad2-8f07-640dbf7edf03\\\\scratchpad\\\\check.mjs\")",
+      "PowerShell(npx wrangler pages functions build --outdir=\"C:\\\\Users\\\\GROWWS~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Growwstacks-Desktop-Thomas-Chat-interface\\\\c3f958ea-8255-4ad2-8f07-640dbf7edf03\\\\scratchpad\\\\fnbuild\" 2>&1)",
+      "PowerShell($p=\"C:\\\\Users\\\\GROWWS~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Growwstacks-Desktop-Thomas-Chat-interface\\\\c3f958ea-8255-4ad2-8f07-640dbf7edf03\\\\scratchpad\\\\fnbuild\"; Get-ChildItem $p -Recurse -File | Select-Object -ExpandProperty Name; Get-Content \\(Join-Path $p \"index.js\"\\) | Select-String -Pattern 'routePath|\"/api' | Select-Object -First 30)",
+      "PowerShell($out=\"C:\\\\Users\\\\GROWWS~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Growwstacks-Desktop-Thomas-Chat-interface\\\\c3f958ea-8255-4ad2-8f07-640dbf7edf03\\\\scratchpad\\\\fnbuild2\"; npx wrangler pages functions build --outdir=\"$out\" 2>&1 | Select-Object -Last 25)",
+      "PowerShell(node \"C:\\\\Users\\\\GROWWS~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Growwstacks-Desktop-Thomas-Chat-interface\\\\c3f958ea-8255-4ad2-8f07-640dbf7edf03\\\\scratchpad\\\\itest.mjs\")",
+      "PowerShell(node \"C:\\\\Users\\\\GROWWS~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Growwstacks-Desktop-Thomas-Chat-interface\\\\c3f958ea-8255-4ad2-8f07-640dbf7edf03\\\\scratchpad\\\\itest.mjs\" 2>&1)",
+      "PowerShell(npm run build 2>&1)",
+      "Bash(awk '/^\\\\.\\(thread-scroll|msg-list|msg-row|bubble\\)/,/^}/' styles.css)",
+      "Bash(awk '/^\\\\[data-theme|^:root/,/^}/{next} /#[0-9a-fA-F]{3,6}\\\\b/{print NR\": \"$0}' styles.css)",
+      "PowerShell(Set-Location \"c:\\\\Users\\\\Growwstacks\\\\Desktop\\\\Thomas_Chat_interface\"; $out=\"C:\\\\Users\\\\GROWWS~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Growwstacks-Desktop-Thomas-Chat-interface\\\\c3f958ea-8255-4ad2-8f07-640dbf7edf03\\\\scratchpad\\\\fnbuild4\"; npx wrangler pages functions build --outdir=\"$out\" 2>&1 | Select-Object -Last 6; \"\"; Get-Content \\(Join-Path $out \"index.js\"\\) | Select-String -Pattern 'routePath: \"' | ForEach-Object { $_.Line.Trim\\(\\) })",
+      "Bash(cd \"c:/Users/Growwstacks/Desktop/Thomas_Chat_interface/functions/api/media\" && mv '[...path].js' '[[path]].js' && ls)",
+      "Bash(python -c ' *)",
+      "Bash(python -)",
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(grep -n \"const who = \\\\|aria-label={\\\\`Select message\" src/components/Thread.jsx)",
+      "Bash(grep -n \"API_BASE\\\\|baseUrl\\\\|fetch\\(\\\\`\\\\|const request\" src/lib/api.js)",
+      "Bash(git check-ignore *)",
+      "Bash(node \"C:/Users/DIVYAN~1/AppData/Local/Temp/claude/d--projects-Wp-chat-interface/6cc91223-41bd-40e3-8e78-4401010d6ba8/scratchpad/check-reply.mjs\")",
+      "Bash(git diff *)",
+      "Bash(node \"C:/Users/DIVYAN~1/AppData/Local/Temp/claude/d--projects-Wp-chat-interface/6cc91223-41bd-40e3-8e78-4401010d6ba8/scratchpad/check-sender.mjs\")",
+      "Bash(node \"C:/Users/DIVYAN~1/AppData/Local/Temp/claude/d--projects-Wp-chat-interface/6cc91223-41bd-40e3-8e78-4401010d6ba8/scratchpad/check-dnd.mjs\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Growwstacks\\Desktop\\Thomas_Chat_interface"
+    ]
+  }
+}
