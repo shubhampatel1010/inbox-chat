@@ -18,22 +18,17 @@ export const isAndroid = /Android/i.test(ua)
 /** True where there is no dialer extension and the chooser should be shown. */
 export const isMobileDialer = isIOS || isAndroid
 
-/** RingQ's Android package id (from its Play Store listing). */
-const RINGQ_ANDROID_PACKAGE = 'com.ringq.app'
-
 /**
- * Link that opens the RingQ app, or null where there is none.
+ * Link that opens RingQ with `digits` in its dialer, or null where there is
+ * none — in which case the chooser copies the number for pasting instead.
  *
- * Android: an intent URL pinned to RingQ's package. It opens RingQ (or its
- * Play Store page if not installed), but RingQ ignores the number in it, so
- * the chooser also offers the number to copy and paste.
+ * None is known today. iOS: RingQ publishes no URL scheme. Android: an intent
+ * pinned to RingQ's package (com.ringq.app) falls through to the Play Store,
+ * because RingQ has no browsable activity for Chrome to launch.
  *
- * iOS: RingQ publishes no URL scheme, so there is no way to open it from a web
- * page. If RingQ support ever provides one, return it here for iOS.
+ * public/ringq-test.html tries every candidate on a real phone; return the
+ * one that works here.
  */
 export function ringqHref(digits) {
-  if (isAndroid) {
-    return `intent:${digits}#Intent;scheme=tel;action=android.intent.action.DIAL;package=${RINGQ_ANDROID_PACKAGE};end`
-  }
   return null
 }
